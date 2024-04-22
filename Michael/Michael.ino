@@ -4,47 +4,47 @@
 int referenz[] = { 0, 1, 2, 3 };
 
 
-#define PIN_0 6
+#define PIN_0 7
 #define NUMPIXELS_0 20
 Adafruit_NeoPixel pixels_0(NUMPIXELS_0, PIN_0, NEO_GRB + NEO_KHZ800);
 
-int player_1_positions[] = { 0, 1, 7, 3 };
-int player_1_boards[] = { 0, 0, 1, 0 };
+int player_1_positions[] = { 0, 1, 2, 3 };
+int player_1_boards[] = { 0, 0, 0, 0 };
 int player_1_farbe[] = { 100, 0, 0 };
-int player_1_joystick = A3;
+int player_1_joystick = 25;
 int player_1_farbe_mit_cursor[] = { 100, 50, 50 };
 
 
-#define PIN_1 7
+#define PIN_1 8
 #define NUMPIXELS_1 20
 Adafruit_NeoPixel pixels_1(NUMPIXELS_1, PIN_1, NEO_GRB + NEO_KHZ800);
 
-int player_2_positions[] = { 0, 1, 2, 7 };
+int player_2_positions[] = { 0, 1, 2, 3 };
 int player_2_boards[] = { 1, 1, 1, 1 };
 int player_2_farbe[] = { 100, 0, 0 };
-int player_2_joystick = A3;
+int player_2_joystick = 25;
 int player_2_farbe_mit_cursor[] = { 100, 50, 50 };
 
 
-#define PIN_2 8
+#define PIN_2 9
 #define NUMPIXELS_2 20
 Adafruit_NeoPixel pixels_2(NUMPIXELS_2, PIN_2, NEO_GRB + NEO_KHZ800);
 
 int player_3_positions[] = { 0, 1, 2, 3 };
 int player_3_boards[] = { 2, 2, 2, 2 };
 int player_3_farbe[] = { 100, 0, 0 };
-int player_3_joystick = A3;
+int player_3_joystick = 25;
 int player_3_farbe_mit_cursor[] = { 100, 50, 50 };
 
 
-#define PIN_3 9
+#define PIN_3 10
 #define NUMPIXELS_3 20
 Adafruit_NeoPixel pixels_3(NUMPIXELS_3, PIN_3, NEO_GRB + NEO_KHZ800);
 
 int player_4_positions[] = { 0, 1, 2, 3 };
 int player_4_boards[] = { 3, 3, 3, 3 };
 int player_4_farbe[] = { 100, 0, 0 };
-int player_4_joystick = A3;
+int player_4_joystick = 25;
 int player_4_farbe_mit_cursor[] = { 100, 50, 50 };
 
 
@@ -62,7 +62,7 @@ bool cursor_with_player_charakter = false;
 
 int gewuerfelte_zahl = 0;
 int marker = 0;
-int marker_b = 4;
+int marker_b = 5;
 
 int r = 0;
 int g = 0;
@@ -86,7 +86,8 @@ void setup() {
     delay(10);
   }
 
-  Serial.begin(9600);
+  Serial.begin(115200);
+  Serial.print("hello");
   pinMode(player_button, INPUT);
 }
 
@@ -482,28 +483,32 @@ void eventhandler() {
   }
 }
 
-void anzeigen(int k, int c, int r, int g, int b) {
+void anzeigen(int k, int c, int g, int b, int r) {
   if (k == 0){
-    pixels_0.setPixelColor(c, pixels_0.Color(r, g, b));
+    pixels_0.setPixelColor(c, pixels_0.Color(g, b, r));
     pixels_0.show();
+    delay(10);
   }
   if (k == 1){
-    pixels_1.setPixelColor(c, pixels_1.Color(r, g, b));
+    pixels_1.setPixelColor(c, pixels_1.Color(g, b, r));
     pixels_1.show();
+    delay(10);
   }
   if (k == 2){
-    pixels_2.setPixelColor(c, pixels_2.Color(r, g, b));
+    pixels_2.setPixelColor(c, pixels_2.Color(g, b, r));
     pixels_2.show();
+    delay(10);
   }
   if (k == 3){
-    pixels_3.setPixelColor(c, pixels_3.Color(r, g, b));
+    pixels_3.setPixelColor(c, pixels_3.Color(g, b, r));
     pixels_3.show();
+    delay(10);
   }
 }
 
 void programm() {
   for (int k = 0; k <= 3; k++) {
-    for (int c = 0; c <= 14; c++) {
+    for (int c = 0; c <= 19; c++) {
       int test = 0;
       if (c == cursor && k == cursor_b) {
         Serial.print(k);
@@ -512,7 +517,8 @@ void programm() {
         r = 100;
         g = 100;
         b = 100;
-        anzeigen(k, c, r, g, b);
+        anzeigen(k, c, g, b, r);
+        test = 1;
       }
       if (c == marker && k == marker_b) {
         Serial.print(k);
@@ -521,10 +527,11 @@ void programm() {
         r = 100;
         g = 100;
         b = 0;
-        anzeigen(k, c, r, g, b);
+        anzeigen(k, c, g, b, r);
+        test = 1;
       }
-      for (int b = 0; b <= 3; b++) {
-        if (c == player_1_positions[b] && k == player_1_boards[b]) {
+      for (int t = 0; t <= 3; t++) {
+        if (c == player_1_positions[t] && k == player_1_boards[t]) {
           Serial.print(k);
           Serial.print(c);
           Serial.println("  blau");
@@ -535,40 +542,40 @@ void programm() {
           test = 1;
         }
       }
-      for (int b = 0; b <= 3; b++) {
-        if (c == player_2_positions[b] && k == player_2_boards[b]) {
+      for (int t = 0; t <= 3; t++) {
+        if (c == player_2_positions[t] && k == player_2_boards[t]) {
           Serial.print(k);
           Serial.print(c);
           Serial.println("  grün");
           r = 0;
           g = 100;
           b = 0;
-          anzeigen(k, c, r, g, b);
+          anzeigen(k, c, g, b, r);
           test = 1;
         }
       }
 
-      for (int b = 0; b <= 3; b++) {
-        if (c == player_3_positions[b] && k == player_3_boards[b]) {
+      for (int t = 0; t <= 3; t++) {
+        if (c == player_3_positions[t] && k == player_3_boards[t]) {
           Serial.print(k);
           Serial.print(c);
           Serial.println("  gelb");
           r = 0;
           g = 100;
           b = 100;
-          anzeigen(k, c, r, g, b);
+          anzeigen(k, c, g, b, r);
           test = 1;
         }
       }
-      for (int b = 0; b <= 3; b++) {
-        if (c == player_4_positions[b] && k == player_4_boards[b]) {
+      for (int t = 0; t <= 3; t++) {
+        if (c == player_4_positions[t] && k == player_4_boards[t]) {
           Serial.print(k);
           Serial.print(c);
           Serial.println("  rot");
           r = 100;
           g = 0;
           b = 0;
-          anzeigen(k, c, r, g, b);
+          anzeigen(k, c, g, b, r);
           test = 1;
         }
       }
@@ -578,7 +585,7 @@ void programm() {
         r = 0;
         g = 0;
         b = 0;
-        anzeigen(k, c, r, g, b);
+        anzeigen(k, c, g, b, r);
         Serial.println("  nichts");
       }
     }
@@ -588,9 +595,9 @@ void programm() {
 
 void loop() {
 
-  curser(A3);
-  eventhandler();
+  //curser(A1);
+  //eventhandler();
   programm();
-  while (1)
-    ;
+  while(1);
+
 }
