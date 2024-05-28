@@ -68,6 +68,7 @@ int r = 0;
 int g = 0;
 int b = 0;
 
+int test_W = 0;
 void setup() {
 
 
@@ -76,7 +77,7 @@ void setup() {
   pinMode(17, OUTPUT);
   digitalWrite(17, HIGH);
 
-  pinMode(14,INPUT);
+  pinMode(14, INPUT);
 
   pixels_0.begin();
   pixels_1.begin();
@@ -97,17 +98,15 @@ void setup() {
   Serial.begin(115200);
   Serial.print("hello");
   pinMode(player_button, INPUT);
-  wue();
 }
 
-void wue(){
-  while (1){
-    if (digitalRead(14) == HIGH){
+void wue() {
+  while (1) {
+    if (digitalRead(14) == HIGH) {
       gewuerfelte_zahl = random(1, 6);
       break;
     }
   }
-  
 }
 bool button(int button) {
   bool bt = 0;
@@ -125,16 +124,12 @@ void curser(int player_Joystick) {
   //bewegung hoch
   if (Joystick <= 800) {
     cursor = cursor + 1;
-    while (Joystick <= 700) {
-      Joystick = analogRead(player_Joystick);  //Achten das Joystick seine Grundposition erreicht hat
-    }
+    delay(100);
   }
   //bewegen runter
   else if (Joystick >= 1400) {
     cursor = cursor - 1;
-    while (Joystick >= 1500) {
-      Joystick = analogRead(player_Joystick);
-    }
+    delay(100);
   }
 
   if (cursor == 18) {
@@ -154,14 +149,25 @@ void curser(int player_Joystick) {
 
 void eventhandler() {
 
+  if (test_W == 0) {
+    wue();
+    test_W = 1;
+  }
   for (int j = 0; j <= 3; j++) {
     if (spieler == 1) {
-      if (cursor == player_1_positions[j] && cursor_b == player_1_boards[j]) {
+      if (cursor == player_1_positions[j] && player_1_positions[j] <= 3 && 0 == player_1_boards[j] && 6 == 6) {
+        marker = 4;
+        marker_b = cursor_b;
+        break;
+      } else if (cursor == player_1_positions[j] && cursor_b == player_1_boards[j]) {
         marker = cursor + gewuerfelte_zahl;
         marker_b = cursor_b;
-        if (marker >= 15) {
+        if (marker >= 14) {
           marker_b++;
-          marker = marker - 15;
+          if (marker_b = 4) {
+            marker_b = 0;
+          }
+          marker = marker - 10;
         }
         break;
         // hover
@@ -173,17 +179,23 @@ void eventhandler() {
 
     else if (spieler == 2) {
 
-      if (cursor == player_2_positions[j] && cursor_b == player_2_boards[j]) {
+      if (cursor == player_2_positions[j] && player_2_positions[j] <= 3 && 1 == player_2_boards[j] && 6 == 6) {
+        marker = 4;
+        marker_b = cursor_b;
+        break;
+      } else if (cursor == player_2_positions[j] && cursor_b == player_2_boards[j]) {
         marker = cursor + gewuerfelte_zahl;
-        marker_b = cursor;
-        if (marker >= 15) {
+        marker_b = cursor_b;
+        if (marker >= 14) {
           marker_b++;
-          marker = marker - 15;
+          if (marker_b = 4) {
+            marker_b = 0;
+          }
+          marker = marker - 10;
         }
         break;
-      }
-
-      else if (cursor != player_2_positions[j] || cursor_b != player_2_boards[j]) {
+        // hover
+      } else if (cursor != player_2_positions[j] || cursor_b != player_2_boards[j]) {
         marker = 0;
         marker_b = 4;
       }
@@ -192,14 +204,22 @@ void eventhandler() {
     // hover
 
     else if (spieler == 3) {
-      if (cursor == player_3_positions[j] && cursor_b == player_3_boards[j]) {
+      if (cursor == player_3_positions[j] && player_3_positions[j] <= 3 && 2 == player_3_boards[j] && 6 == 6) {
+        marker = 4;
+        marker_b = cursor_b;
+        break;
+      } else if (cursor == player_3_positions[j] && cursor_b == player_3_boards[j]) {
         marker = cursor + gewuerfelte_zahl;
-        marker_b = cursor;
-        if (marker >= 15) {
+        marker_b = cursor_b;
+        if (marker >= 14) {
           marker_b++;
-          marker = marker - 15;
+          if (marker_b = 4) {
+            marker_b = 0;
+          }
+          marker = marker - 10;
         }
         break;
+        // hover
       } else if (cursor != player_3_positions[j] || cursor_b != player_3_boards[j]) {
         marker = 0;
         marker_b = 4;
@@ -210,18 +230,23 @@ void eventhandler() {
 
 
     else if (spieler == 4) {
-      if (cursor == player_4_positions[j] && cursor_b == player_4_boards[j]) {
+      if (cursor == player_4_positions[j] && player_4_positions[j] <= 3 && 3 == player_4_boards[j] && 6 == 6) {
+        marker = 4;
+        marker_b = cursor_b;
+        break;
+      } else if (cursor == player_4_positions[j] && cursor_b == player_4_boards[j]) {
         marker = cursor + gewuerfelte_zahl;
-        marker_b = cursor;
-        if (marker >= 15) {
+        marker_b = cursor_b;
+        if (marker >= 14) {
           marker_b++;
-          marker = marker - 15;
+          if (marker_b = 4) {
+            marker_b = 0;
+          }
+          marker = marker - 10;
         }
         break;
         // hover
-      }
-
-      else if (cursor != player_4_positions[j] || cursor_b != player_4_boards[j]) {
+      } else if (cursor != player_4_positions[j] || cursor_b != player_4_boards[j]) {
         marker = 0;
         marker_b = 4;
       }
@@ -230,65 +255,117 @@ void eventhandler() {
   for (int j = 0; j <= 3; j++) {
     if (cursor == player_1_positions[j] && cursor_b == player_1_boards[j] && button(player_button) == true && spieler == 1) {
       Serial.println("worked");
-      player_1_positions[j] = cursor + gewuerfelte_zahl;
-      if (player_1_positions[j] >= 15 && player_1_boards[j] != 3) {
+      if (cursor == player_1_positions[j] && player_1_positions[j] <= 3 && 0 == player_1_boards[j] && 6 == 6) {
+        player_1_positions[j] = 4;
+      } else if (cursor == player_1_positions[j] && cursor_b == player_1_boards[j]) {
+        player_1_positions[j] = cursor + gewuerfelte_zahl;
+      }
+      if (player_1_positions[j] >= 14 && player_1_boards[j] != 3) {
         player_1_boards[j] = player_1_boards[j] + 1;
-        player_1_positions[j] = player_1_positions[j] - 15;
+        if (player_1_boards[j] == 4) {
+          player_1_boards[j] = 0;
+        }
+        player_1_positions[j] = player_1_positions[j] - 10;
+        compare();
         spieler = 2;
-        wue();
+        test_W = 0;
+        cursor_b = 1;
+        cursor = 0;
       } else if (player_1_positions[j] <= 18) {
+        compare();
         spieler = 2;
-        wue();
+        test_W = 0;
+        cursor_b = 1;
+        cursor = 0;
       } else {
         Serial.println("not possible");
       }
       // play animation that the charakter walks to the next destination
     } else if (cursor == player_2_positions[j] && cursor_b == player_2_boards[j] && button(player_button) && spieler == 2 && cursor_with_player_charakter == false) {
-      player_2_positions[j] = cursor + gewuerfelte_zahl;
-      if (player_2_positions[j] >= 15 && player_2_boards[j] != 0) {
+      if (cursor == player_2_positions[j] && player_2_positions[j] <= 3 && 1 == player_2_boards[j] && 6 == 6) {
+        player_2_positions[j] = 4;
+      } else if (cursor == player_2_positions[j] && cursor_b == player_2_boards[j]) {
+        player_2_positions[j] = cursor + gewuerfelte_zahl;
+      }
+      if (player_2_positions[j] >= 14 && player_2_boards[j] != 0) {
         player_2_boards[j] = player_2_boards[j] + 1;
-        player_2_positions[j] = player_2_positions[j] - 15;
+        if (player_2_boards[j] == 4) {
+          player_2_boards[j] = 0;
+        }
+        player_2_positions[j] = player_2_positions[j] - 10;
+        compare();
         spieler = 3;
-        wue();
-      } else if (player_1_positions[j] <= 18) {
+        test_W = 0;
+        cursor_b = 2;
+        cursor = 0;
+      } else if (player_2_positions[j] <= 18) {
+        compare();
         spieler = 3;
-        wue();
+        test_W = 0;
+        cursor_b = 2;
+        cursor = 0;
       } else {
         Serial.println("not possible");
       }
       // play animation that the charakter walks to the next destination
     } else if (cursor == player_3_positions[j] && cursor_b == player_3_boards[j] && button(player_button) && spieler == 3 && cursor_with_player_charakter == false) {
-      player_3_positions[j] = cursor + gewuerfelte_zahl;
-      if (player_3_positions[j] >= 15 && player_3_boards[j] != 1) {
+      if (cursor == player_3_positions[j] && player_3_positions[j] <= 3 && 2 == player_3_boards[j] && 6 == 6) {
+        player_3_positions[j] = 4;
+      } else if (cursor == player_3_positions[j] && cursor_b == player_3_boards[j]) {
+        player_3_positions[j] = cursor + gewuerfelte_zahl;
+      }
+      if (player_3_positions[j] >= 14 && player_3_boards[j] != 1) {
         player_3_boards[j] = player_3_boards[j] + 1;
-        player_3_positions[j] = player_3_positions[j] - 15;
+        if (player_3_boards[j] == 4) {
+          player_3_boards[j] = 0;
+        }
+        player_3_positions[j] = player_3_positions[j] - 10;
+        compare();
         spieler = 4;
-        wue();
-      } else if (player_1_positions[j] <= 18) {
+        test_W = 0;
+        cursor_b = 3;
+        cursor = 0;
+      } else if (player_3_positions[j] <= 18) {
+        compare();
         spieler = 4;
-        wue();
+        test_W = 0;
+        cursor_b = 3;
+        cursor = 0;
       } else {
         Serial.println("not possible");
       }
       // play animation that the charakter walks to the next destination
     } else if (cursor == player_4_positions[j] && cursor_b == player_4_boards[j] && button(player_button) && spieler == 4 && cursor_with_player_charakter == false) {
-      player_4_positions[j] = cursor + gewuerfelte_zahl;
-      if (player_4_positions[j] >= 15 && player_1_boards[j] != 2) {
+      if (cursor == player_4_positions[j] && player_4_positions[j] <= 3 && 3 == player_4_boards[j] && 6 == 6) {
+        player_4_positions[j] = 4;
+      } else if (cursor == player_4_positions[j] && cursor_b == player_4_boards[j]) {
+        player_4_positions[j] = cursor + gewuerfelte_zahl;
+      }
+      if (player_4_positions[j] >= 14 && player_1_boards[j] != 2) {
         player_4_boards[j] = player_4_boards[j] + 1;
-        player_4_positions[j] = player_4_positions[j] - 15;
+        if (player_4_boards[j] == 4) {
+          player_4_boards[j] = 0;
+        }
+        player_4_positions[j] = player_4_positions[j] - 10;
+        compare();
         spieler = 1;
-        wue();
-      } else if (player_1_positions[j] <= 18) {
+        test_W = 0;
+        cursor_b = 0;
+        cursor = 0;
+      } else if (player_4_positions[j] <= 18) {
+        compare();
         spieler = 1;
-        wue();
+        test_W = 0;
+        cursor_b = 0;
+        cursor = 0;
       } else {
         Serial.println("not possible");
       }
       // play animation that the charakter walks to the next destination
     }
   }
-
-
+}
+void compare() {
   if (spieler == 1) {
     for (int i = 0; i <= 3; i++) {
       for (int j = 0; j <= 3; j++) {
@@ -303,9 +380,8 @@ void eventhandler() {
     for (int i = 0; i <= 3; i++) {
       for (int j = 0; j <= 3; j++) {
         if (player_1_positions[i] == player_3_positions[j] && player_1_boards[i] == player_3_boards[j]) {
-          Serial.print(i);
-          player_2_positions[j] = 0;
-          player_2_boards[j] = 1;
+          player_3_positions[j] = referenz[j];
+          player_3_boards[j] = 2;
         }
       }
     }
@@ -314,85 +390,26 @@ void eventhandler() {
     for (int i = 0; i <= 3; i++) {
       for (int j = 0; j <= 3; j++) {
         if (player_1_positions[i] == player_4_positions[j] && player_1_boards[i] == player_4_boards[j]) {
-          Serial.print(i);
-          player_4_positions[j] = 0;
-          player_4_boards[j] = 1;
-        }
-      }
-    }
-
-
-    for (int i = 0; i <= 3; i++) {
-      for (int j = 0; j <= 3; j++) {
-        if (player_2_positions[i] == player_3_positions[j] && player_2_boards[i] == player_3_boards[j]) {
-          Serial.print(i);
-          player_3_positions[j] = 0;
-          player_3_boards[j] = 1;
-        }
-      }
-    }
-
-
-    for (int i = 0; i <= 3; i++) {
-      for (int j = 0; j <= 3; j++) {
-        if (player_2_positions[i] == player_4_positions[j] && player_2_boards[i] == player_4_boards[j]) {
-          Serial.print(i);
-          player_4_positions[j] = 0;
-          player_4_boards[j] = 1;
-        }
-      }
-    }
-
-    for (int i = 0; i <= 3; i++) {
-      for (int j = 0; j <= 3; j++) {
-        if (player_3_positions[i] == player_4_positions[j] && player_3_boards[i] == player_4_boards[j]) {
-          Serial.print(i);
-          player_4_positions[j] = 0;
-          player_4_boards[j] = 1;
+          player_4_positions[j] = referenz[j];
+          player_4_boards[j] = 3;
         }
       }
     }
   }
-
   if (spieler == 2) {
     for (int i = 0; i <= 3; i++) {
       for (int j = 0; j <= 3; j++) {
-        if (player_1_positions[i] == player_2_positions[j] && player_1_boards[i] == player_2_boards[j]) {
-          player_2_positions[j] = 3;
-          player_2_boards[j] = 1;
+        if (player_2_positions[i] == player_1_positions[j] && player_2_boards[i] == player_1_boards[j]) {
+          player_1_positions[j] = referenz[j];
+          player_1_boards[j] = 0;
         }
       }
     }
-
-
-    for (int i = 0; i <= 3; i++) {
-      for (int j = 0; j <= 3; j++) {
-        if (player_1_positions[i] == player_3_positions[j] && player_1_boards[i] == player_3_boards[j]) {
-          Serial.print(i);
-          player_2_positions[j] = 0;
-          player_2_boards[j] = 1;
-        }
-      }
-    }
-
-
-    for (int i = 0; i <= 3; i++) {
-      for (int j = 0; j <= 3; j++) {
-        if (player_1_positions[i] == player_4_positions[j] && player_1_boards[i] == player_4_boards[j]) {
-          Serial.print(i);
-          player_4_positions[j] = 0;
-          player_4_boards[j] = 1;
-        }
-      }
-    }
-
-
     for (int i = 0; i <= 3; i++) {
       for (int j = 0; j <= 3; j++) {
         if (player_2_positions[i] == player_3_positions[j] && player_2_boards[i] == player_3_boards[j]) {
-          Serial.print(i);
-          player_3_positions[j] = 0;
-          player_3_boards[j] = 1;
+          player_3_positions[j] = referenz[j];
+          player_3_boards[j] = 2;
         }
       }
     }
@@ -401,19 +418,8 @@ void eventhandler() {
     for (int i = 0; i <= 3; i++) {
       for (int j = 0; j <= 3; j++) {
         if (player_2_positions[i] == player_4_positions[j] && player_2_boards[i] == player_4_boards[j]) {
-          Serial.print(i);
-          player_4_positions[j] = 0;
-          player_4_boards[j] = 1;
-        }
-      }
-    }
-
-    for (int i = 0; i <= 3; i++) {
-      for (int j = 0; j <= 3; j++) {
-        if (player_3_positions[i] == player_4_positions[j] && player_3_boards[i] == player_4_boards[j]) {
-          Serial.print(i);
-          player_4_positions[j] = 0;
-          player_4_boards[j] = 1;
+          player_4_positions[j] = referenz[j];
+          player_4_boards[j] = 3;
         }
       }
     }
@@ -421,63 +427,25 @@ void eventhandler() {
   if (spieler == 3) {
     for (int i = 0; i <= 3; i++) {
       for (int j = 0; j <= 3; j++) {
-        if (player_1_positions[i] == player_2_positions[j] && player_1_boards[i] == player_2_boards[j]) {
-          player_2_positions[j] = 3;
+        if (player_3_positions[i] == player_1_positions[j] && player_3_boards[i] == player_1_boards[j]) {
+          player_1_positions[j] = referenz[j];
+          player_1_boards[j] = 0;
+        }
+      }
+    }
+    for (int i = 0; i <= 3; i++) {
+      for (int j = 0; j <= 3; j++) {
+        if (player_3_positions[i] == player_2_positions[j] && player_3_boards[i] == player_2_boards[j]) {
+          player_2_positions[j] = referenz[j];
           player_2_boards[j] = 1;
         }
       }
     }
-
-
-    for (int i = 0; i <= 3; i++) {
-      for (int j = 0; j <= 3; j++) {
-        if (player_1_positions[i] == player_3_positions[j] && player_1_boards[i] == player_3_boards[j]) {
-          Serial.print(i);
-          player_2_positions[j] = 0;
-          player_2_boards[j] = 1;
-        }
-      }
-    }
-
-
-    for (int i = 0; i <= 3; i++) {
-      for (int j = 0; j <= 3; j++) {
-        if (player_1_positions[i] == player_4_positions[j] && player_1_boards[i] == player_4_boards[j]) {
-          Serial.print(i);
-          player_4_positions[j] = 0;
-          player_4_boards[j] = 1;
-        }
-      }
-    }
-
-
-    for (int i = 0; i <= 3; i++) {
-      for (int j = 0; j <= 3; j++) {
-        if (player_2_positions[i] == player_3_positions[j] && player_2_boards[i] == player_3_boards[j]) {
-          Serial.print(i);
-          player_3_positions[j] = 0;
-          player_3_boards[j] = 1;
-        }
-      }
-    }
-
-
-    for (int i = 0; i <= 3; i++) {
-      for (int j = 0; j <= 3; j++) {
-        if (player_2_positions[i] == player_4_positions[j] && player_2_boards[i] == player_4_boards[j]) {
-          Serial.print(i);
-          player_4_positions[j] = 0;
-          player_4_boards[j] = 1;
-        }
-      }
-    }
-
     for (int i = 0; i <= 3; i++) {
       for (int j = 0; j <= 3; j++) {
         if (player_3_positions[i] == player_4_positions[j] && player_3_boards[i] == player_4_boards[j]) {
-          Serial.print(i);
-          player_4_positions[j] = 0;
-          player_4_boards[j] = 1;
+          player_4_positions[j] = referenz[j];
+          player_4_boards[j] = 3;
         }
       }
     }
@@ -485,63 +453,25 @@ void eventhandler() {
   if (spieler == 4) {
     for (int i = 0; i <= 3; i++) {
       for (int j = 0; j <= 3; j++) {
-        if (player_1_positions[i] == player_2_positions[j] && player_1_boards[i] == player_2_boards[j]) {
-          player_2_positions[j] = 3;
+        if (player_4_positions[i] == player_1_positions[j] && player_4_boards[i] == player_1_boards[j]) {
+          player_1_positions[j] = referenz[j];
+          player_1_boards[j] = 0;
+        }
+      }
+    }
+    for (int i = 0; i <= 3; i++) {
+      for (int j = 0; j <= 3; j++) {
+        if (player_4_positions[i] == player_2_positions[j] && player_4_boards[i] == player_2_boards[j]) {
+          player_2_positions[j] = referenz[j];
           player_2_boards[j] = 1;
         }
       }
     }
-
-
     for (int i = 0; i <= 3; i++) {
       for (int j = 0; j <= 3; j++) {
-        if (player_1_positions[i] == player_3_positions[j] && player_1_boards[i] == player_3_boards[j]) {
-          Serial.print(i);
-          player_2_positions[j] = 0;
-          player_2_boards[j] = 1;
-        }
-      }
-    }
-
-
-    for (int i = 0; i <= 3; i++) {
-      for (int j = 0; j <= 3; j++) {
-        if (player_1_positions[i] == player_4_positions[j] && player_1_boards[i] == player_4_boards[j]) {
-          Serial.print(i);
-          player_4_positions[j] = 0;
-          player_4_boards[j] = 1;
-        }
-      }
-    }
-
-
-    for (int i = 0; i <= 3; i++) {
-      for (int j = 0; j <= 3; j++) {
-        if (player_2_positions[i] == player_3_positions[j] && player_2_boards[i] == player_3_boards[j]) {
-          Serial.print(i);
-          player_3_positions[j] = 0;
-          player_3_boards[j] = 1;
-        }
-      }
-    }
-
-
-    for (int i = 0; i <= 3; i++) {
-      for (int j = 0; j <= 3; j++) {
-        if (player_2_positions[i] == player_4_positions[j] && player_2_boards[i] == player_4_boards[j]) {
-          Serial.print(i);
-          player_4_positions[j] = 0;
-          player_4_boards[j] = 1;
-        }
-      }
-    }
-
-    for (int i = 0; i <= 3; i++) {
-      for (int j = 0; j <= 3; j++) {
-        if (player_3_positions[i] == player_4_positions[j] && player_3_boards[i] == player_4_boards[j]) {
-          Serial.print(i);
-          player_4_positions[j] = 0;
-          player_4_boards[j] = 1;
+        if (player_4_positions[i] == player_3_positions[j] && player_4_boards[i] == player_3_boards[j]) {
+          player_3_positions[j] = referenz[j];
+          player_3_boards[j] = 2;
         }
       }
     }
