@@ -11,7 +11,7 @@ Adafruit_NeoPixel pixels_0(NUMPIXELS_0, PIN_0, NEO_GRB + NEO_KHZ800);
 int player_1_positions[] = { 0, 1, 2, 3 };
 int player_1_boards[] = { 0, 0, 0, 0 };
 int player_1_farbe[] = { 100, 0, 0 };
-int player_1_joystick = 25;
+int player_1_joystick = 0;
 int player_1_farbe_mit_cursor[] = { 100, 50, 50 };
 
 
@@ -22,7 +22,7 @@ Adafruit_NeoPixel pixels_1(NUMPIXELS_1, PIN_1, NEO_GRB + NEO_KHZ800);
 int player_2_positions[] = { 0, 1, 2, 3 };
 int player_2_boards[] = { 1, 1, 1, 1 };
 int player_2_farbe[] = { 100, 0, 0 };
-int player_2_joystick = 25;
+int player_2_joystick = 18;
 int player_2_farbe_mit_cursor[] = { 100, 50, 50 };
 
 
@@ -33,7 +33,7 @@ Adafruit_NeoPixel pixels_2(NUMPIXELS_2, PIN_2, NEO_GRB + NEO_KHZ800);
 int player_3_positions[] = { 0, 1, 2, 3 };
 int player_3_boards[] = { 2, 2, 2, 2 };
 int player_3_farbe[] = { 100, 0, 0 };
-int player_3_joystick = 25;
+int player_3_joystick = 16;
 int player_3_farbe_mit_cursor[] = { 100, 50, 50 };
 
 
@@ -44,7 +44,7 @@ Adafruit_NeoPixel pixels_3(NUMPIXELS_3, PIN_3, NEO_GRB + NEO_KHZ800);
 int player_4_positions[] = { 0, 1, 2, 3 };
 int player_4_boards[] = { 3, 3, 3, 3 };
 int player_4_farbe[] = { 100, 0, 0 };
-int player_4_joystick = 25;
+int player_4_joystick = 17;
 int player_4_farbe_mit_cursor[] = { 100, 50, 50 };
 
 
@@ -83,6 +83,12 @@ void setup() {
   pixels_1.begin();
   pixels_2.begin();
   pixels_3.begin();
+
+  pinMode(player_1_joystick, OUTPUT);
+  pinMode(player_2_joystick, OUTPUT);
+  pinMode(player_3_joystick, OUTPUT);
+  pinMode(player_4_joystick, OUTPUT);
+
   for (int i = 0; i < NUMPIXELS_0; i++) {
     pixels_0.setPixelColor(i, pixels_0.Color(0, 0, 0));
     pixels_0.show();
@@ -117,17 +123,42 @@ bool button(int button) {
   return bt;
 }
 
-void curser(int player_Joystick) {
+void curser() {
 
+  if (spieler == 1) {
+    digitalWrite(player_1_joystick, HIGH);
+    digitalWrite(player_2_joystick, LOW);
+    digitalWrite(player_3_joystick, LOW);
+    digitalWrite(player_4_joystick, LOW);
+  }
+  if (spieler == 2) {
+    digitalWrite(player_2_joystick, HIGH);
+    digitalWrite(player_1_joystick, LOW);
+    digitalWrite(player_3_joystick, LOW);
+    digitalWrite(player_4_joystick, LOW);
+  }
+  if (spieler == 3) {
+    digitalWrite(player_3_joystick, HIGH);
+    digitalWrite(player_2_joystick, LOW);
+    digitalWrite(player_1_joystick, LOW);
+    digitalWrite(player_4_joystick, LOW);
+  }
+  if (spieler == 4) {
+    digitalWrite(player_4_joystick, HIGH);
+    digitalWrite(player_2_joystick, LOW);
+    digitalWrite(player_3_joystick, LOW);
+    digitalWrite(player_1_joystick, LOW);
+  }
+  int Joystick = analogRead(35);
   //bewegen des cursers
-  int Joystick = analogRead(player_Joystick);
+
   //bewegung hoch
-  if (Joystick <= 800) {
+  if (Joystick <= 1000) {
     cursor = cursor + 1;
     delay(100);
   }
   //bewegen runter
-  else if (Joystick >= 1400) {
+  else if (Joystick >= 2000) {
     cursor = cursor - 1;
     delay(100);
   }
@@ -593,7 +624,7 @@ void programm() {
 
 void loop() {
 
-  curser(35);
+  curser();
   eventhandler();
   programm();
 }
