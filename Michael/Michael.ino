@@ -1,5 +1,7 @@
 #include <Adafruit_NeoPixel.h>
-
+#include <Adafruit_GFX.h>
+#include <Adafruit_ST7789.h>
+#include <SPI.h>
 
 int referenz[] = { 0, 1, 2, 3 };
 
@@ -48,6 +50,18 @@ int player_4_joystick = 17;
 int player_4_farbe_mit_cursor[] = { 100, 50, 50 };
 
 
+#define TFT_RST 13  // Or set to -1 and connect to Arduino RESET pin
+#define TFT_DC 12
+#define TFT_MOSI 22  // Data out
+#define TFT_SCLK 21  // Clock out
+
+Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RST);
+
+
+int LCDO1 = 32;
+int LCDO2 = 33;
+int LCDO3 = 34;
+
 int spieler = 1;
 
 int player_button = 15;
@@ -71,9 +85,6 @@ int b = 0;
 int test_W = 0;
 void setup() {
 
-
-
-
   pinMode(17, OUTPUT);
   digitalWrite(17, HIGH);
 
@@ -88,6 +99,21 @@ void setup() {
   pinMode(player_2_joystick, OUTPUT);
   pinMode(player_3_joystick, OUTPUT);
   pinMode(player_4_joystick, OUTPUT);
+  pinMode(LCDO1, OUTPUT);
+  pinMode(LCDO2, OUTPUT);
+  pinMode(LCDO3, OUTPUT);
+
+  digitalWrite(LCDO1, HIGH);
+  digitalWrite(LCDO2, LOW);
+  digitalWrite(LCDO3, LOW);
+  tft.init(240, 280);
+  tft.fillScreen(ST77XX_BLACK);
+  tft.setCursor(20, 20);
+  tft.setTextColor(ST77XX_WHITE);
+  tft.setTextWrap(true);
+  tft.setTextSize(3);
+  tft.setRotation(3);
+  tft.println("Spieler1");
 
   for (int i = 0; i < NUMPIXELS_0; i++) {
     pixels_0.setPixelColor(i, pixels_0.Color(0, 0, 0));
@@ -130,37 +156,51 @@ void curser() {
     digitalWrite(player_2_joystick, LOW);
     digitalWrite(player_3_joystick, LOW);
     digitalWrite(player_4_joystick, LOW);
+    digitalWrite(LCDO1, HIGH);
+    digitalWrite(LCDO2, LOW);
+    digitalWrite(LCDO3, LOW);
+    tft.println("Spieler1");
   }
   if (spieler == 2) {
     digitalWrite(player_2_joystick, HIGH);
     digitalWrite(player_1_joystick, LOW);
     digitalWrite(player_3_joystick, LOW);
     digitalWrite(player_4_joystick, LOW);
+    digitalWrite(LCDO1, HIGH);
+    digitalWrite(LCDO2, LOW);
+    digitalWrite(LCDO3, LOW);
+    tft.println("Spieler2");
   }
   if (spieler == 3) {
     digitalWrite(player_3_joystick, HIGH);
     digitalWrite(player_2_joystick, LOW);
     digitalWrite(player_1_joystick, LOW);
     digitalWrite(player_4_joystick, LOW);
+    digitalWrite(LCDO1, LOW);
+    digitalWrite(LCDO2, HIGH);
+    digitalWrite(LCDO3, LOW);
+    tft.println("Spieler3");
   }
   if (spieler == 4) {
     digitalWrite(player_4_joystick, HIGH);
     digitalWrite(player_2_joystick, LOW);
     digitalWrite(player_3_joystick, LOW);
     digitalWrite(player_1_joystick, LOW);
+    digitalWrite(LCDO1, HIGH);
+    digitalWrite(LCDO2, HIGH);
+    digitalWrite(LCDO3, LOW);
+    tft.println("Spieler4");
   }
   int Joystick = analogRead(35);
   //bewegen des cursers
 
   //bewegung hoch
   if (Joystick <= 1000) {
-    cursor = cursor + 1;
-    delay(100);
+    cursor = cursor - 1;
   }
   //bewegen runter
   else if (Joystick >= 2000) {
-    cursor = cursor - 1;
-    delay(100);
+    cursor = cursor + 1;
   }
 
   if (cursor == 18) {
@@ -178,7 +218,7 @@ void curser() {
   }
 }
 
-void eventhandler() {
+int eventhandler() {
 
   if (test_W == 0) {
     wue();
@@ -189,16 +229,30 @@ void eventhandler() {
       if (cursor == player_1_positions[j] && player_1_positions[j] <= 3 && 0 == player_1_boards[j] && 6 == 6) {
         marker = 4;
         marker_b = cursor_b;
+        for (int z = 0; z <= 3; z++) {
+          if (player_1_boards[z] == marker_b) {
+            if (player_1_positions[z] == marker) {
+              return 0;
+            }
+          }
+        }
         break;
       } else if (cursor == player_1_positions[j] && cursor_b == player_1_boards[j]) {
         marker = cursor + gewuerfelte_zahl;
         marker_b = cursor_b;
         if (marker >= 14) {
           marker_b++;
-          if (marker_b = 4) {
+          if (marker_b == 4) {
             marker_b = 0;
           }
           marker = marker - 10;
+        }
+        for (int z = 0; z <= 3; z++) {
+          if (player_1_boards[z] == marker_b) {
+            if (player_1_positions[z] == marker) {
+              return 0;
+            }
+          }
         }
         break;
         // hover
@@ -213,16 +267,35 @@ void eventhandler() {
       if (cursor == player_2_positions[j] && player_2_positions[j] <= 3 && 1 == player_2_boards[j] && 6 == 6) {
         marker = 4;
         marker_b = cursor_b;
+        for (int z = 0; z <= 3; z++) {
+          if (player_2_boards[z] == marker_b) {
+            if (player_2_positions[z] == marker) {
+              return 0;
+            }
+          }
+        }
         break;
       } else if (cursor == player_2_positions[j] && cursor_b == player_2_boards[j]) {
         marker = cursor + gewuerfelte_zahl;
         marker_b = cursor_b;
         if (marker >= 14) {
           marker_b++;
-          if (marker_b = 4) {
+          if (marker_b == 4) {
             marker_b = 0;
           }
           marker = marker - 10;
+        }
+        if (player_2_boards[j] == marker_b) {
+          if (player_2_positions[j] == marker) {
+            return 0;
+          }
+        }
+        for (int z = 0; z <= 3; z++) {
+          if (player_2_boards[z] == marker_b) {
+            if (player_2_positions[z] == marker) {
+              return 0;
+            }
+          }
         }
         break;
         // hover
@@ -238,16 +311,35 @@ void eventhandler() {
       if (cursor == player_3_positions[j] && player_3_positions[j] <= 3 && 2 == player_3_boards[j] && 6 == 6) {
         marker = 4;
         marker_b = cursor_b;
+        for (int z = 0; z <= 3; z++) {
+          if (player_3_boards[z] == marker_b) {
+            if (player_3_positions[z] == marker) {
+              return 0;
+            }
+          }
+        }
         break;
       } else if (cursor == player_3_positions[j] && cursor_b == player_3_boards[j]) {
         marker = cursor + gewuerfelte_zahl;
         marker_b = cursor_b;
         if (marker >= 14) {
           marker_b++;
-          if (marker_b = 4) {
+          if (marker_b == 4) {
             marker_b = 0;
           }
           marker = marker - 10;
+        }
+        if (player_3_boards[j] == marker_b) {
+          if (player_3_positions[j] == marker) {
+            return 0;
+          }
+        }
+        for (int z = 0; z <= 3; z++) {
+          if (player_3_boards[z] == marker_b) {
+            if (player_3_positions[z] == marker) {
+              return 0;
+            }
+          }
         }
         break;
         // hover
@@ -264,16 +356,35 @@ void eventhandler() {
       if (cursor == player_4_positions[j] && player_4_positions[j] <= 3 && 3 == player_4_boards[j] && 6 == 6) {
         marker = 4;
         marker_b = cursor_b;
+        for (int z = 0; z <= 3; z++) {
+          if (player_4_boards[z] == marker_b) {
+            if (player_4_positions[z] == marker) {
+              return 0;
+            }
+          }
+        }
         break;
       } else if (cursor == player_4_positions[j] && cursor_b == player_4_boards[j]) {
         marker = cursor + gewuerfelte_zahl;
         marker_b = cursor_b;
         if (marker >= 14) {
           marker_b++;
-          if (marker_b = 4) {
+          if (marker_b == 4) {
             marker_b = 0;
           }
           marker = marker - 10;
+        }
+        if (player_4_boards[j] == marker_b) {
+          if (player_4_positions[j] == marker) {
+            return 0;
+          }
+        }
+        for (int z = 0; z <= 3; z++) {
+          if (player_4_boards[z] == marker_b) {
+            if (player_4_positions[z] == marker) {
+              return 0;
+            }
+          }
         }
         break;
         // hover
@@ -395,6 +506,7 @@ void eventhandler() {
       // play animation that the charakter walks to the next destination
     }
   }
+  return 0;
 }
 void compare() {
   if (spieler == 1) {
@@ -513,22 +625,22 @@ void anzeigen(int k, int c, int g, int b, int r) {
   if (k == 0) {
     pixels_0.setPixelColor(c, pixels_0.Color(g, b, r));
     pixels_0.show();
-    delay(10);
+    delay(8);
   }
   if (k == 1) {
     pixels_1.setPixelColor(c, pixels_1.Color(g, b, r));
     pixels_1.show();
-    delay(10);
+    delay(8);
   }
   if (k == 2) {
     pixels_2.setPixelColor(c, pixels_2.Color(g, b, r));
     pixels_2.show();
-    delay(10);
+    delay(8);
   }
   if (k == 3) {
     pixels_3.setPixelColor(c, pixels_3.Color(g, b, r));
     pixels_3.show();
-    delay(10);
+    delay(8);
   }
 }
 
