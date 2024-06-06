@@ -52,10 +52,10 @@ int player_4_farbe_mit_cursor[] = { 100, 50, 50 };
 
 #define TFT_RST 13  // Or set to -1 and connect to Arduino RESET pin
 #define TFT_DC 12
-#define TFT_MOSI 22  // Data out
-#define TFT_SCLK 21  // Clock out
+#define TFT_MOSI 21  // Data out
+#define TFT_SCLK 22  // Clock out
 
-Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RST);
+Adafruit_ST7789 tft = Adafruit_ST7789(TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RST);
 
 
 int LCDO1 = 32;
@@ -192,14 +192,15 @@ void curser() {
     tft.println("Spieler4");
   }
   int Joystick = analogRead(35);
+  Serial.println(Joystick);
   //bewegen des cursers
 
   //bewegung hoch
-  if (Joystick <= 1000) {
+  if (Joystick <= 800) {
     cursor = cursor - 1;
   }
   //bewegen runter
-  else if (Joystick >= 2000) {
+  else if (Joystick >= 3000) {
     cursor = cursor + 1;
   }
 
@@ -226,7 +227,7 @@ int eventhandler() {
   }
   for (int j = 0; j <= 3; j++) {
     if (spieler == 1) {
-      if (cursor == player_1_positions[j] && player_1_positions[j] <= 3 && 0 == player_1_boards[j] && 6 == 6) {
+      if (cursor == player_1_positions[j] && player_1_positions[j] <= 3 && cursor_b == player_1_boards[j] && 6 == 6) {
         marker = 4;
         marker_b = cursor_b;
         for (int z = 0; z <= 3; z++) {
@@ -264,7 +265,7 @@ int eventhandler() {
 
     else if (spieler == 2) {
 
-      if (cursor == player_2_positions[j] && player_2_positions[j] <= 3 && 1 == player_2_boards[j] && 6 == 6) {
+      if (cursor == player_2_positions[j] && player_2_positions[j] <= 3 && cursor_b == player_2_boards[j] && 6 == 6) {
         marker = 4;
         marker_b = cursor_b;
         for (int z = 0; z <= 3; z++) {
@@ -308,7 +309,7 @@ int eventhandler() {
     // hover
 
     else if (spieler == 3) {
-      if (cursor == player_3_positions[j] && player_3_positions[j] <= 3 && 2 == player_3_boards[j] && 6 == 6) {
+      if (cursor == player_3_positions[j] && player_3_positions[j] <= 3 && cursor_b == player_3_boards[j] && 6 == 6) {
         marker = 4;
         marker_b = cursor_b;
         for (int z = 0; z <= 3; z++) {
@@ -353,7 +354,7 @@ int eventhandler() {
 
 
     else if (spieler == 4) {
-      if (cursor == player_4_positions[j] && player_4_positions[j] <= 3 && 3 == player_4_boards[j] && 6 == 6) {
+      if (cursor == player_4_positions[j] && player_4_positions[j] <= 3 && cursor_b == player_4_boards[j] && 6 == 6) {
         marker = 4;
         marker_b = cursor_b;
         for (int z = 0; z <= 3; z++) {
@@ -668,6 +669,10 @@ void programm() {
             r = 50;
             g = 50;
             b = 100;
+          } else if (marker == player_1_positions[t] && marker_b == player_1_boards[t]) {
+            r = 50;
+            g = 0;
+            b = 100;
           } else {
             r = 0;
             g = 0;
@@ -680,6 +685,10 @@ void programm() {
       for (int t = 0; t <= 3; t++) {
         if (c == player_2_positions[t] && k == player_2_boards[t]) {
           if (cursor == player_2_positions[t] && cursor_b == player_2_boards[t]) {
+            r = 50;
+            g = 100;
+            b = 50;
+          } else if (marker == player_2_positions[t] && marker_b == player_2_boards[t]) {
             r = 50;
             g = 100;
             b = 50;
@@ -699,6 +708,10 @@ void programm() {
             r = 100;
             g = 100;
             b = 50;
+          } else if (marker == player_3_positions[t] && marker_b == player_3_boards[t]) {
+            r = 100;
+            g = 100;
+            b = 75;
           } else {
             r = 100;
             g = 100;
@@ -713,6 +726,10 @@ void programm() {
           if (cursor == player_4_positions[t] && cursor_b == player_4_boards[t]) {
             r = 100;
             g = 50;
+            b = 50;
+          } else if (marker == player_4_positions[t] && marker_b == player_4_boards[t]) {
+            r = 100;
+            g = 0;
             b = 50;
           } else {
             r = 100;
