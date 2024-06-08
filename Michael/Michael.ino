@@ -55,12 +55,7 @@ int player_4_farbe_mit_cursor[] = { 100, 50, 50 };
 #define TFT_MOSI 21  // Data out
 #define TFT_SCLK 22  // Clock out
 
-Adafruit_ST7789 tft = Adafruit_ST7789(TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RST);
-
-
-int LCDO1 = 32;
-int LCDO2 = 33;
-int LCDO3 = 34;
+Adafruit_ST7789 tft = Adafruit_ST7789(32, TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RST);
 
 int spieler = 1;
 
@@ -99,21 +94,16 @@ void setup() {
   pinMode(player_2_joystick, OUTPUT);
   pinMode(player_3_joystick, OUTPUT);
   pinMode(player_4_joystick, OUTPUT);
-  pinMode(LCDO1, OUTPUT);
-  pinMode(LCDO2, OUTPUT);
-  pinMode(LCDO3, OUTPUT);
-
-  digitalWrite(LCDO1, HIGH);
-  digitalWrite(LCDO2, LOW);
-  digitalWrite(LCDO3, LOW);
   tft.init(240, 280);
+  tft.setRotation(1);
   tft.fillScreen(ST77XX_BLACK);
   tft.setCursor(20, 20);
   tft.setTextColor(ST77XX_WHITE);
   tft.setTextWrap(true);
   tft.setTextSize(3);
-  tft.setRotation(3);
-  tft.println("Spieler1");
+  tft.println("Tristan Bihler");
+  tft.setTextSize(15);
+  tft.setTextColor(ST77XX_BLACK);
 
   for (int i = 0; i < NUMPIXELS_0; i++) {
     pixels_0.setPixelColor(i, pixels_0.Color(0, 0, 0));
@@ -130,13 +120,13 @@ void setup() {
   Serial.begin(115200);
   Serial.print("hello");
   pinMode(player_button, INPUT);
-  wue();
+  displays();
 }
 
 void wue() {
   while (1) {
     if (digitalRead(14)) {
-      gewuerfelte_zahl = random(1,7);
+      gewuerfelte_zahl = random(1, 7);
       test_W = 1;
       while (digitalRead(14)) {
       }
@@ -161,40 +151,24 @@ void curser() {
     digitalWrite(player_2_joystick, LOW);
     digitalWrite(player_3_joystick, LOW);
     digitalWrite(player_4_joystick, LOW);
-    digitalWrite(LCDO1, HIGH);
-    digitalWrite(LCDO2, LOW);
-    digitalWrite(LCDO3, LOW);
-    tft.println("Spieler1");
   }
   if (spieler == 2) {
     digitalWrite(player_2_joystick, HIGH);
     digitalWrite(player_1_joystick, LOW);
     digitalWrite(player_3_joystick, LOW);
     digitalWrite(player_4_joystick, LOW);
-    digitalWrite(LCDO1, HIGH);
-    digitalWrite(LCDO2, LOW);
-    digitalWrite(LCDO3, LOW);
-    tft.println("Spieler2");
   }
   if (spieler == 3) {
     digitalWrite(player_3_joystick, HIGH);
     digitalWrite(player_2_joystick, LOW);
     digitalWrite(player_1_joystick, LOW);
     digitalWrite(player_4_joystick, LOW);
-    digitalWrite(LCDO1, LOW);
-    digitalWrite(LCDO2, HIGH);
-    digitalWrite(LCDO3, LOW);
-    tft.println("Spieler3");
   }
   if (spieler == 4) {
     digitalWrite(player_4_joystick, HIGH);
     digitalWrite(player_2_joystick, LOW);
     digitalWrite(player_3_joystick, LOW);
     digitalWrite(player_1_joystick, LOW);
-    digitalWrite(LCDO1, HIGH);
-    digitalWrite(LCDO2, HIGH);
-    digitalWrite(LCDO3, LOW);
-    tft.println("Spieler4");
   }
   int Joystick = analogRead(35);
   Serial.println(Joystick);
@@ -245,7 +219,7 @@ int eventhandler() {
         if (marker >= 14 && marker_b != 3) {
           marker_b++;
           marker = marker - 10;
-          if (marker_b == 4){
+          if (marker_b == 4) {
             marker_b = 0;
           }
         } else {
@@ -284,7 +258,7 @@ int eventhandler() {
         if (marker >= 14 && marker_b != 0) {
           marker_b++;
           marker = marker - 10;
-          if (marker_b == 4){
+          if (marker_b == 4) {
             marker_b = 0;
           }
         } else {
@@ -329,7 +303,7 @@ int eventhandler() {
         if (marker >= 14 && marker_b != 1) {
           marker_b++;
           marker = marker - 10;
-          if (marker_b == 4){
+          if (marker_b == 4) {
             marker_b = 0;
           }
         } else {
@@ -375,7 +349,7 @@ int eventhandler() {
         if (marker >= 14 && marker_b != 2) {
           marker_b++;
           marker = marker - 10;
-          if (marker_b == 4){
+          if (marker_b == 4) {
             marker_b = 0;
           }
         } else {
@@ -414,28 +388,34 @@ int eventhandler() {
           player_1_boards[j] = 0;
         }
         player_1_positions[j] = player_1_positions[j] - 10;
-        compare();
-        spieler = 2;
-        cursor_b = 1;
-        cursor = 0;
-        programm();
-        wue();
-
+        if (gewuerfelte_zahl == 6) {
+          compare();
+          displays();
+        } else {
+          compare();
+          spieler = 2;
+          cursor_b = 1;
+          cursor = 0;
+          displays();
+        }
       } else if (player_1_positions[j] <= 18) {
-        compare();
-        spieler = 2;
-        cursor_b = 1;
-        cursor = 0;
-        programm();
-        wue();
+        if (gewuerfelte_zahl == 6) {
+          compare();
+          displays();
+        } else {
+          compare();
+          spieler = 2;
+          cursor_b = 1;
+          cursor = 0;
+          displays();
+        }
       } else {
         player_1_positions[j] = cursor;
         compare();
         spieler = 2;
         cursor_b = 1;
         cursor = 0;
-        programm();
-        wue();
+        displays();
       }
       // play animation that the charakter walks to the next destination
     } else if (cursor == player_2_positions[j] && cursor_b == player_2_boards[j] && button(player_button) && spieler == 2 && cursor_with_player_charakter == false) {
@@ -450,29 +430,35 @@ int eventhandler() {
           player_2_boards[j] = 0;
         }
         player_2_positions[j] = player_2_positions[j] - 10;
-        compare();
-        spieler = 3;
-        cursor_b = 2;
-        cursor = 0;
-        programm();
-        wue();
+        if (gewuerfelte_zahl == 6) {
+          compare();
+          displays();
+        } else {
+          compare();
+          spieler = 3;
+          cursor_b = 2;
+          cursor = 0;
+          displays();
+        }
 
       } else if (player_2_positions[j] <= 18) {
-        compare();
-        spieler = 3;
-        cursor_b = 2;
-        cursor = 0;
-        programm();
-        wue();
-
+        if (gewuerfelte_zahl == 6) {
+          compare();
+          displays();
+        } else {
+          compare();
+          spieler = 3;
+          cursor_b = 2;
+          cursor = 0;
+          displays();
+        }
       } else {
         player_2_positions[j] = cursor;
         compare();
         spieler = 3;
         cursor_b = 2;
         cursor = 0;
-        programm();
-        wue();
+        displays();
       }
       // play animation that the charakter walks to the next destination
     } else if (cursor == player_3_positions[j] && cursor_b == player_3_boards[j] && button(player_button) && spieler == 3 && cursor_with_player_charakter == false) {
@@ -487,29 +473,35 @@ int eventhandler() {
           player_3_boards[j] = 0;
         }
         player_3_positions[j] = player_3_positions[j] - 10;
-        compare();
-        spieler = 4;
-        cursor_b = 3;
-        cursor = 0;
-        programm();
-        wue();
+        if (gewuerfelte_zahl == 6) {
+          compare();
+          displays();
+        } else {
+          compare();
+          spieler = 4;
+          cursor_b = 3;
+          cursor = 0;
+          displays();
+        }
 
       } else if (player_3_positions[j] <= 18) {
-        compare();
-        spieler = 4;
-        cursor_b = 3;
-        cursor = 0;
-        programm();
-        wue();
-
+        if (gewuerfelte_zahl == 6) {
+          compare();
+          displays();
+        } else {
+          compare();
+          spieler = 4;
+          cursor_b = 3;
+          cursor = 0;
+          displays();
+        }
       } else {
         player_3_positions[j] = cursor;
         compare();
         spieler = 4;
         cursor_b = 3;
         cursor = 0;
-        programm();
-        wue();
+        displays();
       }
       // play animation that the charakter walks to the next destination
     } else if (cursor == player_4_positions[j] && cursor_b == player_4_boards[j] && button(player_button) && spieler == 4 && cursor_with_player_charakter == false) {
@@ -524,27 +516,35 @@ int eventhandler() {
           player_4_boards[j] = 0;
         }
         player_4_positions[j] = player_4_positions[j] - 10;
-        compare();
-        spieler = 1;
-        cursor_b = 0;
-        cursor = 0;
-        programm();
-        wue();
+         if (gewuerfelte_zahl == 6) {
+          compare();
+          displays();
+        }
+        else {
+          compare();
+          spieler = 1;
+          cursor_b = 0;
+          cursor = 0;
+          displays();
+        }
       } else if (player_4_positions[j] <= 18) {
-        compare();
-        spieler = 1;
-        cursor_b = 0;
-        cursor = 0;
-        programm();
-        wue();
+        if (gewuerfelte_zahl == 6) {
+          compare();
+          displays();
+        } else {
+          compare();
+          spieler = 1;
+          cursor_b = 0;
+          cursor = 0;
+          displays();
+        }
       } else {
         player_4_positions[j] = cursor;
         compare();
         spieler = 1;
         cursor_b = 0;
         cursor = 0;
-        programm();
-        wue();
+        displays();
       }
       // play animation that the charakter walks to the next destination
     }
@@ -792,7 +792,109 @@ void programm() {
   }
 }
 
-
+void displays() {
+  programm();
+  if (spieler == 1) {
+    int i = 0;
+    tft.setCursor(100, 60);
+    for (int t = 0; t <= 3; t++) {
+      if (player_1_positions[t] < 4 && player_1_boards[t] == 0) {
+        i++;
+      }
+    }
+    if (i == 4) {
+      for (int t = 0; t < 3; t++) {
+        tft.fillScreen(ST77XX_BLUE);
+        wue();
+        tft.setCursor(100, 60);
+        tft.println(gewuerfelte_zahl);
+        if (gewuerfelte_zahl == 6) {
+          break;
+        }
+      }
+    } else {
+      tft.fillScreen(ST77XX_BLUE);
+      wue();
+      tft.setCursor(100, 60);
+      tft.println(gewuerfelte_zahl);
+    }
+  }
+  if (spieler == 2) {
+    int i = 0;
+    tft.setCursor(100, 60);
+    for (int t = 0; t <= 3; t++) {
+      if (player_2_positions[t] < 4 && player_2_boards[t] == 1) {
+        i++;
+      }
+    }
+    if (i == 4) {
+      for (int t = 0; t < 3; t++) {
+        tft.fillScreen(0x0580);
+        wue();
+        tft.setCursor(100, 60);
+        tft.println(gewuerfelte_zahl);
+        if (gewuerfelte_zahl == 6) {
+          break;
+        }
+      }
+    } else {
+      tft.fillScreen(0x0580);
+      wue();
+      tft.setCursor(100, 60);
+      tft.println(gewuerfelte_zahl);
+    }
+  }
+  if (spieler == 3) {
+    int i = 0;
+    tft.setCursor(100, 60);
+    for (int t = 0; t <= 3; t++) {
+      if (player_3_positions[t] < 4 && player_3_boards[t] == 2) {
+        i++;
+      }
+    }
+    if (i == 4) {
+      for (int t = 0; t < 3; t++) {
+        tft.fillScreen(ST77XX_YELLOW);
+        wue();
+        tft.setCursor(100, 60);
+        tft.println(gewuerfelte_zahl);
+        if (gewuerfelte_zahl == 6) {
+          break;
+        }
+      }
+    } else {
+      tft.fillScreen(ST77XX_YELLOW);
+      wue();
+      tft.setCursor(100, 60);
+      tft.println(gewuerfelte_zahl);
+    }
+  }
+  if (spieler == 4) {
+    int i = 0;
+    tft.setCursor(100, 60);
+    for (int t = 0; t <= 3; t++) {
+      if (player_4_positions[t] < 4 && player_4_boards[t] == 3) {
+        i++;
+      }
+    }
+    if (i == 4) {
+      for (int t = 0; t < 3; t++) {
+        tft.fillScreen(ST77XX_RED);
+        wue();
+        tft.setCursor(100, 60);
+        tft.println(gewuerfelte_zahl);
+        if (gewuerfelte_zahl == 6) {
+          break;
+        }
+      }
+    } else {
+      tft.fillScreen(ST77XX_RED);
+      wue();
+      tft.setCursor(100, 60);
+      tft.println(gewuerfelte_zahl);
+    }
+  }
+}
 void loop() {
 
   curser();
