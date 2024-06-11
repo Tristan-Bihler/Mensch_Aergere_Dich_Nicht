@@ -398,7 +398,7 @@ int eventhandler() {
           cursor = 0;
           displays();
         }
-      } else if (player_1_positions[j] <= 18) {
+      } else if (player_1_positions[j] <= 17) {
         if (gewuerfelte_zahl == 6) {
           compare();
           displays();
@@ -441,7 +441,7 @@ int eventhandler() {
           displays();
         }
 
-      } else if (player_2_positions[j] <= 18) {
+      } else if (player_2_positions[j] <= 17) {
         if (gewuerfelte_zahl == 6) {
           compare();
           displays();
@@ -484,7 +484,7 @@ int eventhandler() {
           displays();
         }
 
-      } else if (player_3_positions[j] <= 18) {
+      } else if (player_3_positions[j] <= 17) {
         if (gewuerfelte_zahl == 6) {
           compare();
           displays();
@@ -527,7 +527,7 @@ int eventhandler() {
           cursor = 0;
           displays();
         }
-      } else if (player_4_positions[j] <= 18) {
+      } else if (player_4_positions[j] <= 17) {
         if (gewuerfelte_zahl == 6) {
           compare();
           displays();
