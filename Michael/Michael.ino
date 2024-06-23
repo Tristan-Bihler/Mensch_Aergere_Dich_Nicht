@@ -101,9 +101,15 @@ void setup() {
   tft.setTextColor(ST77XX_WHITE);
   tft.setTextWrap(true);
   tft.setTextSize(3);
-  tft.println("Tristan Bihler");
+  tft.setCursor(20, 20);
+  tft.println("Michael E.");
+  tft.setCursor(20, 60);
+  tft.println("Tristan B.");
+  tft.setCursor(20, 100);
+  tft.println("Schmidt+Bartl");
   tft.setTextSize(15);
   tft.setTextColor(ST77XX_BLACK);
+  delay(1000);
 
   for (int i = 0; i < NUMPIXELS_0; i++) {
     pixels_0.setPixelColor(i, pixels_0.Color(0, 0, 0));
